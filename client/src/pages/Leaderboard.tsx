@@ -3,9 +3,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import LeaderboardTable from '@/components/LeaderboardTable';
 import { mockLeaderboard } from '@/lib/mockData';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
-function LeaderboardContent() {
+export default function Leaderboard() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -31,13 +30,5 @@ function LeaderboardContent() {
 
       <Footer />
     </div>
-  );
-}
-
-export default function Leaderboard() {
-  return (
-    <ProtectedRoute>
-      <LeaderboardContent />
-    </ProtectedRoute>
   );
 }

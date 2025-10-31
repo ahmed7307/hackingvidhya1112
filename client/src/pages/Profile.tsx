@@ -16,6 +16,8 @@ function ProfileContent() {
 
   if (!user) return null;
 
+  const isAdmin = user.role === 'admin';
+
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
@@ -39,27 +41,31 @@ function ProfileContent() {
                     <div className="flex items-center gap-3 mb-2">
                       <h1 className="font-serif text-3xl font-bold">{user.username}</h1>
                       <Badge variant="outline" className="bg-primary/20 text-primary border-primary/40">
-                        Advanced
+                        {isAdmin ? 'Administrator' : 'Advanced'}
                       </Badge>
                     </div>
-                    <p className="text-muted-foreground mb-4">Cybersecurity enthusiast | CTF player</p>
-                    <div className="flex gap-6 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Trophy className="w-4 h-4 text-primary" />
-                        <span>4,250 XP</span>
+                    <p className="text-muted-foreground mb-4">
+                      {isAdmin ? 'Platform Administrator' : 'Cybersecurity enthusiast | CTF player'}
+                    </p>
+                    {!isAdmin && (
+                      <div className="flex gap-6 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="w-4 h-4 text-primary" />
+                          <span>4,250 XP</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Target className="w-4 h-4 text-primary" />
+                          <span>24 Rooms</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Flame className="w-4 h-4 text-primary" />
+                          <span>12 Day Streak</span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Target className="w-4 h-4 text-primary" />
-                        <span>24 Rooms</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Flame className="w-4 h-4 text-primary" />
-                        <span>12 Day Streak</span>
-                      </div>
-                    </div>
+                    )}
                   </div>
 
-                  <Link href="/settings">
+                  <Link href={isAdmin ? "/admin/settings" : "/settings"}>
                     <Button variant="outline" data-testid="button-edit-profile">
                       <Settings className="w-4 h-4 mr-2" />
                       Settings
@@ -67,75 +73,79 @@ function ProfileContent() {
                   </Link>
                 </div>
 
-                <div className="mt-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Progress to Expert</span>
-                    <span className="text-sm text-muted-foreground">4,250 / 7,000 XP</span>
+                {!isAdmin && (
+                  <div className="mt-6">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium">Progress to Expert</span>
+                      <span className="text-sm text-muted-foreground">4,250 / 7,000 XP</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div className="bg-primary h-2 rounded-full" style={{ width: '60%' }}></div>
+                    </div>
                   </div>
-                  <div className="w-full bg-secondary rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '60%' }}></div>
-                  </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
-            <Tabs defaultValue="rooms" className="space-y-6">
-              <TabsList>
-                <TabsTrigger value="rooms" data-testid="tab-rooms">Completed Rooms</TabsTrigger>
-                <TabsTrigger value="blogs" data-testid="tab-blogs">Blogs</TabsTrigger>
-                <TabsTrigger value="writeups" data-testid="tab-writeups">Write-ups</TabsTrigger>
-              </TabsList>
+            {!isAdmin && (
+              <Tabs defaultValue="rooms" className="space-y-6">
+                <TabsList>
+                  <TabsTrigger value="rooms" data-testid="tab-rooms">Completed Rooms</TabsTrigger>
+                  <TabsTrigger value="blogs" data-testid="tab-blogs">Blogs</TabsTrigger>
+                  <TabsTrigger value="writeups" data-testid="tab-writeups">Write-ups</TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="rooms">
-                <Card className="border-primary/20">
-                  <CardHeader>
-                    <CardTitle>Completed Rooms</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border">
-                        <div>
-                          <p className="font-medium">Web Exploitation 101</p>
-                          <p className="text-sm text-muted-foreground">Completed 2 days ago</p>
-                        </div>
-                        <Badge variant="outline" className="bg-primary/20 text-primary border-primary/40">
-                          Easy
-                        </Badge>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="blogs">
-                <Card className="border-primary/20">
-                  <CardHeader>
-                    <CardTitle>Published Blogs</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">No blogs published yet.</p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="writeups">
-                <Card className="border-primary/20">
-                  <CardHeader>
-                    <CardTitle>Published Write-ups</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border">
-                        <div>
-                          <p className="font-medium">Web Exploitation 101 - Complete Walkthrough</p>
-                          <p className="text-sm text-muted-foreground">Published 4 days ago • 89 likes</p>
+                <TabsContent value="rooms">
+                  <Card className="border-primary/20">
+                    <CardHeader>
+                      <CardTitle>Completed Rooms</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border">
+                          <div>
+                            <p className="font-medium">Web Exploitation 101</p>
+                            <p className="text-sm text-muted-foreground">Completed 2 days ago</p>
+                          </div>
+                          <Badge variant="outline" className="bg-primary/20 text-primary border-primary/40">
+                            Easy
+                          </Badge>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="blogs">
+                  <Card className="border-primary/20">
+                    <CardHeader>
+                      <CardTitle>Published Blogs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">No blogs published yet.</p>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="writeups">
+                  <Card className="border-primary/20">
+                    <CardHeader>
+                      <CardTitle>Published Write-ups</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border">
+                          <div>
+                            <p className="font-medium">Web Exploitation 101 - Complete Walkthrough</p>
+                            <p className="text-sm text-muted-foreground">Published 4 days ago • 89 likes</p>
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            )}
           </motion.div>
         </div>
       </main>

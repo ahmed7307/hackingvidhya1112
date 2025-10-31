@@ -5,9 +5,8 @@ import Footer from '@/components/Footer';
 import CTFCard from '@/components/CTFCard';
 import { mockCTFs } from '@/lib/mockData';
 import { Button } from '@/components/ui/button';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
-function CTFListContent() {
+export default function CTFList() {
   const [filter, setFilter] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All');
 
   const filteredCTFs = filter === 'All' ? mockCTFs : mockCTFs.filter((ctf) => ctf.difficulty === filter);
@@ -60,13 +59,5 @@ function CTFListContent() {
 
       <Footer />
     </div>
-  );
-}
-
-export default function CTFList() {
-  return (
-    <ProtectedRoute>
-      <CTFListContent />
-    </ProtectedRoute>
   );
 }

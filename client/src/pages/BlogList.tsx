@@ -6,9 +6,8 @@ import BlogCard from '@/components/BlogCard';
 import { mockBlogs } from '@/lib/mockData';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
-import ProtectedRoute from '@/components/ProtectedRoute';
 
-function BlogListContent() {
+export default function BlogList() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredBlogs = mockBlogs.filter((blog) =>
@@ -61,13 +60,5 @@ function BlogListContent() {
 
       <Footer />
     </div>
-  );
-}
-
-export default function BlogList() {
-  return (
-    <ProtectedRoute>
-      <BlogListContent />
-    </ProtectedRoute>
   );
 }
