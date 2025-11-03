@@ -3,7 +3,8 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
 import { Toaster as HotToaster } from 'react-hot-toast';
 import { getCurrentUser } from './lib/auth';
-
+import ProtectedRoute from './components/ProtectedRoute';
+import GuestRoute from './components/GuestRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -28,16 +29,15 @@ import AdminHallOfFame from './pages/admin/AdminHallOfFame';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminSettings from './pages/admin/AdminSettings';
 import NotFound from './pages/not-found';
+import AdminLogin from './pages/admin/login';
 
 function Router() {
   const user = getCurrentUser();
-
+  
   return (
     <Switch>
+      {/* Public Routes */}
       <Route path="/" component={Home} />
-      <Route path="/login" component={Login} />
-      <Route path="/register" component={Register} />
-      <Route path="/dashboard" component={Dashboard} />
       <Route path="/ctfs" component={CTFList} />
       <Route path="/ctf/:id" component={CTFDetail} />
       <Route path="/blogs" component={BlogList} />
@@ -46,19 +46,103 @@ function Router() {
       <Route path="/writeup/:id" component={WriteupDetail} />
       <Route path="/leaderboard" component={Leaderboard} />
       <Route path="/halloffame" component={HallOfFame} />
-      <Route path="/profile" component={Profile} />
-      <Route path="/settings" component={Settings} />
       <Route path="/faq" component={FAQ} />
       <Route path="/contact" component={Contact} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/about" component={About} />
       
-      <Route path="/admin/dashboard" component={AdminDashboard} />
-      <Route path="/admin/reports" component={AdminReports} />
-      <Route path="/admin/halloffame" component={AdminHallOfFame} />
-      <Route path="/admin/users" component={AdminUsers} />
-      <Route path="/admin/settings" component={AdminSettings} />
+      {/* Guest Only Routes (Login/Register) - Redirect if already logged in */}
+      <Route path="/login">
+        {() => (
+          <GuestRoute>
+            <Login />
+          </GuestRoute>
+        )}
+      </Route>
       
+      <Route path="/register">
+        {() => (
+          <GuestRoute>
+            <Register />
+          </GuestRoute>
+        )}
+      </Route>
+      
+      <Route path="/admin/login">
+        {() => (
+          <GuestRoute>
+            <AdminLogin />
+          </GuestRoute>
+        )}
+      </Route>
+      
+      {/* Protected User Routes - Require login */}
+      <Route path="/dashboard">
+        {() => (
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/profile">
+        {() => (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/settings">
+        {() => (
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      {/* Protected Admin Routes - Require admin role */}
+      <Route path="/admin/dashboard">
+        {() => (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/admin/reports">
+        {() => (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminReports />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/admin/halloffame">
+        {() => (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminHallOfFame />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/admin/users">
+        {() => (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminUsers />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      <Route path="/admin/settings">
+        {() => (
+          <ProtectedRoute requireAdmin={true}>
+            <AdminSettings />
+          </ProtectedRoute>
+        )}
+      </Route>
+      
+      {/* 404 Not Found */}
       <Route component={NotFound} />
     </Switch>
   );

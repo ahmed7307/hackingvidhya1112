@@ -96,8 +96,8 @@ function WriteupDetailContent() {
 
 export default function WriteupDetail() {
   return (
-    <ProtectedRoute>
+    
       <WriteupDetailContent />
-    </ProtectedRoute>
+    
   );
 }

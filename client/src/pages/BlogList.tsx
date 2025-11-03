@@ -1,19 +1,69 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Search, Plus } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import BlogCard from '@/components/BlogCard';
+import AdminControls from '@/components/AdminControls';
+import BlogFormModal from '@/components/BlogFormModal';
 import { mockBlogs } from '@/lib/mockData';
+import { isAdmin } from '@/lib/auth';
 import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import toast from 'react-hot-toast';
 
 export default function BlogList() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [blogs, setBlogs] = useState(mockBlogs);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingBlog, setEditingBlog] = useState<any>(null);
+  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
 
-  const filteredBlogs = mockBlogs.filter((blog) =>
+  const filteredBlogs = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     blog.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
+  const handleAddNew = () => {
+    setModalMode('add');
+    setEditingBlog(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEdit = (blog: any) => {
+    setModalMode('edit');
+    setEditingBlog(blog);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to delete this blog post?')) {
+      setBlogs(blogs.filter((b) => b.id !== id));
+      toast.success('Blog post deleted successfully!');
+    }
+  };
+
+  const handleSave = (data: any) => {
+    if (modalMode === 'add') {
+      const newBlog = {
+        ...data,
+        id: Date.now().toString(),
+        date: new Date().toISOString().split('T')[0],
+        likes: 0,
+        comments: 0,
+        views: 0,
+        tags: data.category ? [data.category] : ['Tutorial'],
+        authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.author}`,
+        thumbnail: data.image || '',
+        excerpt: data.excerpt,
+      };
+      setBlogs([newBlog, ...blogs]);
+    } else {
+      setBlogs(
+        blogs.map((b) => (b.id === editingBlog.id ? { ...b, ...data, tags: data.category ? [data.category] : b.tags } : b))
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -26,10 +76,21 @@ export default function BlogList() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="font-serif text-3xl font-bold mb-2">
-              Security <span className="text-primary">Blogs</span>
-            </h1>
-            <p className="text-muted-foreground mb-8">Learn from expert insights and tutorials</p>
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h1 className="font-serif text-3xl font-bold mb-2">
+                  Security <span className="text-primary">Blogs</span>
+                </h1>
+                <p className="text-muted-foreground">Learn from expert insights and tutorials</p>
+              </div>
+              
+              {isAdmin() && (
+                <Button onClick={handleAddNew} className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add New
+                </Button>
+              )}
+            </div>
 
             <div className="relative mb-8">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -49,16 +110,33 @@ export default function BlogList() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="relative group"
                 >
                   <BlogCard {...blog} />
+                  {isAdmin() && (
+                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <AdminControls
+                        onEdit={() => handleEdit(blog)}
+                        onDelete={() => handleDelete(blog.id)}
+                      />
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </div>
           </motion.div>
         </div>
       </main>
-
+      
       <Footer />
+
+      <BlogFormModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        initialData={editingBlog}
+        mode={modalMode}
+      />
     </div>
   );
 }

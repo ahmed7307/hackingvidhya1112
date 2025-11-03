@@ -26,12 +26,14 @@ export default function Navbar() {
     { path: '/', label: 'Home' },
     { path: '/ctfs', label: 'CTFs' },
     { path: '/blogs', label: 'Blogs' },
+    { path: '/writeups', label: 'Write-ups' },
     { path: '/leaderboard', label: 'Leaderboard' },
     { path: '/halloffame', label: 'Hall of Fame' },
     { path: '/about', label: 'About' },
   ];
 
   const userLinks = [
+     { path: '/', label: 'Home' },
     { path: '/dashboard', label: 'Dashboard' },
     { path: '/ctfs', label: 'CTFs' },
     { path: '/blogs', label: 'Blogs' },
@@ -43,10 +45,13 @@ export default function Navbar() {
 
   const adminLinks = [
     { path: '/admin/dashboard', label: 'Dashboard' },
+     { path: '/ctfs', label: 'CTFs' },
+    { path: '/blogs', label: 'Blogs' },
+    { path: '/writeups', label: 'Write-ups' },
     { path: '/admin/reports', label: 'Reports' },
     { path: '/admin/users', label: 'Users' },
     { path: '/admin/halloffame', label: 'Hall of Fame' },
-    { path: '/about', label: 'About' },
+    
   ];
 
   const links = user ? (user.role === 'admin' ? adminLinks : userLinks) : publicLinks;

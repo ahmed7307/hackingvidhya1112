@@ -31,11 +31,7 @@ export default function HeroSection() {
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
               </Link>
-              <Link href="/login">
-                <Button size="lg" variant="outline" data-testid="button-hero-login">
-                  Login
-                </Button>
-              </Link>
+             
             </div>
           </motion.div>
 

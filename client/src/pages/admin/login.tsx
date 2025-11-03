@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { login } from '@/lib/auth';
+import { adminLogin } from '@/lib/auth';
 import toast from 'react-hot-toast';
-import { Terminal } from 'lucide-react';
+import { Shield, Terminal } from 'lucide-react';
 
-export default function Login() {
+export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,21 +19,21 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
 
-    const user = login(username, password);
+    const user = adminLogin(username, password);
 
     if (user) {
-      toast.success(`Welcome back, ${user.username}!`);
+      toast.success(`Welcome back, Administrator ${user.username}!`);
       setTimeout(() => {
-        setLocation('/dashboard');
+        setLocation('/admin/dashboard');
       }, 500);
     } else {
-      toast.error('Invalid credentials');
+      toast.error('Invalid admin credentials');
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-background to-card">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-b from-slate-900 to-slate-800">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -44,79 +44,75 @@ export default function Login() {
           <Link href="/">
             <a className="inline-flex items-center gap-2 mb-4">
               <Terminal className="w-8 h-8 text-primary animate-glow-pulse" />
-              <span className="font-serif text-2xl font-bold">
+              <span className="font-serif text-2xl font-bold text-white">
                 Hacking <span className="text-primary">Vidya</span>
               </span>
             </a>
           </Link>
         </div>
 
-        <Card className="border-primary/20 shadow-neon">
-          <CardHeader>
-            <CardTitle>Welcome Back</CardTitle>
-            <CardDescription>Login to continue your hacking journey</CardDescription>
+        <Card className="border-red-500/30 shadow-lg shadow-red-500/20 bg-slate-900/50 backdrop-blur">
+          <CardHeader className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Shield className="w-6 h-6 text-red-500" />
+              <CardTitle className="text-white">Admin Access</CardTitle>
+            </div>
+            <CardDescription className="text-slate-400">
+              Restricted area - Administrator login only
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username" className="text-slate-200">Admin Username</Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Enter your username"
+                  placeholder="Enter admin username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  data-testid="input-username"
-                  className="focus:border-primary"
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-red-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-slate-200">Admin Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Enter admin password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  data-testid="input-password"
-                  className="focus:border-primary"
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-red-500"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-red-600 hover:bg-red-700 text-white"
                 disabled={isLoading}
-                data-testid="button-login"
               >
-                {isLoading ? 'Logging in...' : 'Login'}
+                {isLoading ? 'Authenticating...' : 'Admin Login'}
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm">
-              <span className="text-muted-foreground">Don't have an account? </span>
-              <Link href="/register">
-                <a className="text-primary hover:underline" data-testid="link-register">
-                  Register
+            <div className="mt-6 text-center text-sm">
+              <Link href="/login">
+                <a className="text-slate-400 hover:text-primary transition-colors">
+                  ← Back to User Login
                 </a>
               </Link>
             </div>
 
-            <div className="mt-4 p-4 bg-muted rounded-lg text-sm">
-              <p className="font-semibold mb-2">Demo Credentials:</p>
-              <p className="text-muted-foreground">Username: user</p>
-              <p className="text-muted-foreground">Password: password</p>
-            </div>
-
-            <div className="mt-4 text-center">
-              <Link href="/admin/login">
-                <a className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                  Admin Login →
-                </a>
-              </Link>
+            <div className="mt-4 p-4 bg-slate-800/50 border border-slate-700 rounded-lg text-sm">
+              <p className="font-semibold mb-2 text-slate-200 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-red-500" />
+                Demo Admin Credentials:
+              </p>
+              <p className="text-slate-400">Username: admin</p>
+              <p className="text-slate-400">Password: admin</p>
             </div>
           </CardContent>
         </Card>
